@@ -1,3 +1,8 @@
+.main-header
+{
+    border-bottom: 1px solid #dee2e6;
+    z-index: 1034;
+}
 .sidebar-dark-primary{
     background-color: #E2E8F0 !important;
 }
@@ -14,6 +19,7 @@
 
 .nav-link{
     color: #2C3E50 !important;
+    padding-top: 10px !important;
 }
 
 .content-header {

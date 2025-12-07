@@ -281,9 +281,20 @@
                             <i class="fas fa-sign-in-alt me-2"></i>Sign In
                         </button>
                     </form>
-                    <div class="footer-text">
-                        <p>Developed by Edwin Abril Jr. | <a target="_blank" href="https://www.facebook.com/eabril.27">Contact Support</a></p>
-                    </div>
+                    <footer class="main-footer mt-4">
+                        <div class="text-center">
+                            Developed by <strong>Edwin Abril Jr.</strong>
+                            &nbsp;•&nbsp;
+                            <a href="https://www.facebook.com/eabril.27" target="_blank" class="text-decoration-none">
+                                <i class="fab fa-facebook-f"></i> Facebook
+                            </a>
+                            &nbsp;•&nbsp;
+                            Powered by
+                            <a href="https://www.facebook.com/kerritsolution" target="_blank" class="text-decoration-none">
+                                <strong>Kerr IT Solutions</strong>
+                            </a>
+                        </div>
+                    </footer>
                 </div>
             </div>
         </div>

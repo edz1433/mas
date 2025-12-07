@@ -32,23 +32,23 @@ class MasterController extends Controller
     // }
     public function drive()
     {
-    $user = auth()->user(); // Get the current authenticated user
+        $user = auth()->user(); // Get the current authenticated user
 
-    // Filter users based on role
-    $users = User::where('role', 'Staff')->get(); 
+        // Filter users based on role
+        $users = User::where('role', 'Staff')->get(); 
 
-    // Filter folders based on the user's role
-    if (in_array($user->role, ['Administrator', 'Staff', 'Records Officer'])) {
-        $docFolder = DocuFolder::where('folder_category', 'mainfolder')->get();
-    } elseif ($user->role === 'Staff_reg') {
-        $docFolder = DocuFolder::where('folder_category', 'mainfolder')
-                               ->where('folder_name', 'En Route')
-                               ->get();
-    } else {
-        $docFolder = collect(); // No folders for other roles
-    }
+        // Filter folders based on the user's role
+        if (in_array($user->role, ['Administrator', 'Staff', 'Records Officer'])) {
+            $docFolder = DocuFolder::where('folder_category', 'mainfolder')->get();
+        } elseif ($user->role === 'Staff_reg') {
+            $docFolder = DocuFolder::where('folder_category', 'mainfolder')
+                                ->where('folder_name', 'En Route')
+                                ->get();
+        } else {
+            $docFolder = collect(); // No folders for other roles
+        }
 
-    return view("drive.drive", compact('users', 'docFolder'));
+        return view("drive.drive", compact('users', 'docFolder'));
     }
 
     public function log()

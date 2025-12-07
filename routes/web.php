@@ -66,11 +66,10 @@ Route::group(['middleware'=>['login_auth', NoCacheMiddleware::class]],function()
     Route::get('/delete-file/{id}', [DocumentController::class, 'deleteFile'])->name('delete-file');
 
     //User
-    Route::get('/users/ulist',[MasterController::class,'user'])->name('ulist');
-    Route::post('/users/uCreate',[UserController::class,'uCreate'])->name('uCreate');
-    Route::get('/users/{id}',[UserController::class,'uEdit'])->name('uEdit');
-    Route::post('/users/uUpdate',[UserController::class,'uUpdate'])->name('uUpdate');
-    Route::get('/users/uDelete/{id}',[UserController::class,'uDelete'])->name('uDelete');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
+    Route::post('/users/save', [UserController::class, 'save'])->name('users.save');
+    Route::delete('/users/delete/{id}', [UserController::class, 'delete'])->name('users.delete');
     
     //Employee
     Route::get('/emp',[EmployeeController::class,'emp_list'])->name('emp_list');
@@ -90,6 +89,8 @@ Route::group(['middleware'=>['login_auth', NoCacheMiddleware::class]],function()
     Route::get('/office/{id}',[OfficeController::class,'officeEdit'])->name('officeEdit');
     Route::post('/office/officeUpdate',[OfficeController::class,'officeUpdate'])->name('officeUpdate');
     Route::get('/office/officeDelete{id}',[OfficeController::class,'officeDelete'])->name('officeDelete');
+
+    Route::post('/billing-upgrade', [DocumentFolderController::class, 'billingUpgrade'])->name('billing.upgrade');
 
     //logout 
     Route::post('/logout',[MasterController::class,'logout'])->name('logout');
