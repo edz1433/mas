@@ -20,9 +20,9 @@ class LoginAuth
         if (auth()->check()) {
             $userRole = auth()->user()->role;
     
-            if ($userRole == 'Records Officer' && ($request->is('users') || $request->is('users/ulist'))) {
-                return redirect()->route('dashboard')->with('error1', 'You do not have permission to access this page');
-            }
+            // if ($userRole == 'Records Officer' && ($request->is('users') || $request->is('users/ulist'))) {
+            //     return redirect()->route('dashboard')->with('error1', 'You do not have permission to access this page');
+            // }
         } else {
             return redirect()->route('getLogin')->with('error', 'You have to sign in first to access this page');
         }

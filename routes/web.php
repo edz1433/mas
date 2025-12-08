@@ -71,12 +71,15 @@ Route::group(['middleware'=>['login_auth', NoCacheMiddleware::class]],function()
     Route::get('/users/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
     Route::post('/users/save', [UserController::class, 'save'])->name('users.save');
     Route::delete('/users/delete/{id}', [UserController::class, 'delete'])->name('users.delete');
+<<<<<<< HEAD
     Route::patch('/users/toggle-status/{id}', [UserController::class, 'toggleStatus'])->name('users.toggleStatus');
 
 
     //Account
     Route::get('/account-settings', [AccountContrroller::class, 'index'])->name('account.index');
     Route::post('/account-update', [AccountContrroller::class, 'update'])->name('account.update');
+=======
+>>>>>>> 777a96406e44bbe39a6a431482101893bcfb77c3
     
     //Employee
     Route::get('/emp',[EmployeeController::class,'emp_list'])->name('emp_list');
@@ -96,6 +99,8 @@ Route::group(['middleware'=>['login_auth', NoCacheMiddleware::class]],function()
     Route::get('/office/{id}',[OfficeController::class,'officeEdit'])->name('officeEdit');
     Route::post('/office/officeUpdate',[OfficeController::class,'officeUpdate'])->name('officeUpdate');
     Route::get('/office/officeDelete{id}',[OfficeController::class,'officeDelete'])->name('officeDelete');
+
+    Route::post('/billing-upgrade', [DocumentFolderController::class, 'billingUpgrade'])->name('billing.upgrade');
 
     //logout 
     Route::post('/logout',[MasterController::class,'logout'])->name('logout');

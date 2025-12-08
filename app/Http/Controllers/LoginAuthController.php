@@ -29,8 +29,8 @@ class LoginAuthController extends Controller
         ]);
 
         if ($validatedAdmin) {
-            $route = (auth()->user()->role == "Administrator") || (auth()->user()->role == "Records Officer") ? 'dashboard' : 'drive';
-            return redirect()->route($route)->with('success', 'Login Successfully');
+            // $route = (auth()->user()->role == "Administrator") || (auth()->user()->role == "Records Officer") ? 'dashboard' : 'drive';
+            return redirect()->route('dashboard')->with('success', 'Login Successfully');
         }else {
             return redirect()->back()->with('error', 'Invalid Credentialss');
         }

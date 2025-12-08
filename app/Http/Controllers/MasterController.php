@@ -71,8 +71,23 @@ class MasterController extends Controller
         $user = auth()->user(); // Get the current authenticated user
 
         // Filter users based on role
+<<<<<<< HEAD
         $users = User::where('role', '!=', 'Administrator')->get(); 
         $docFolder = DocuFolder::where('folder_category', 'mainfolder')->get();
+=======
+        $users = User::where('role', 'Staff')->get(); 
+
+        // Filter folders based on the user's role
+        if (in_array($user->role, ['Administrator', 'Staff', 'Records Officer'])) {
+            $docFolder = DocuFolder::where('folder_category', 'mainfolder')->get();
+        } elseif ($user->role === 'Staff_reg') {
+            $docFolder = DocuFolder::where('folder_category', 'mainfolder')
+                                ->where('folder_name', 'En Route')
+                                ->get();
+        } else {
+            $docFolder = collect(); // No folders for other roles
+        }
+>>>>>>> 777a96406e44bbe39a6a431482101893bcfb77c3
 
         return view("drive.drive", compact('users', 'docFolder'));
     }

@@ -12,6 +12,7 @@ class UserController extends Controller
     // Show list + form (create mode when no $uEdit)
     public function index()
     {
+<<<<<<< HEAD
         if (auth()->user()->role === 'Administrator') {
             // Show all users
             $users = User::orderBy('lname')->get();
@@ -21,6 +22,11 @@ class UserController extends Controller
                         ->orderBy('lname')
                         ->get();
         }
+=======
+        $users = User::whereIn('role', ['Administrator', 'Principal', 'Teacher'])
+                     ->orderBy('lname')
+                     ->get();
+>>>>>>> 777a96406e44bbe39a6a431482101893bcfb77c3
 
         $uEdit = null; // create mode
 
@@ -30,7 +36,11 @@ class UserController extends Controller
     // Edit form
     public function edit($id)
     {
+<<<<<<< HEAD
         $users = User::whereIn('role', ['Principal', 'Teacher'])
+=======
+        $users = User::whereIn('role', ['Administrator', 'Principal', 'Teacher'])
+>>>>>>> 777a96406e44bbe39a6a431482101893bcfb77c3
                      ->orderBy('lname')
                      ->get();
 
@@ -108,6 +118,7 @@ class UserController extends Controller
             'uid'     => $id
         ]);
     }
+<<<<<<< HEAD
 
     public function toggleStatus($id)
     {
@@ -120,4 +131,6 @@ class UserController extends Controller
         // Return JSON response
         return response()->json(['status' => $user->status]);
     }
+=======
+>>>>>>> 777a96406e44bbe39a6a431482101893bcfb77c3
 }
