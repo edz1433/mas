@@ -79,17 +79,11 @@
                                 </div>
                                 <select name="Role" class="form-control" required>
                                     <option value="">-- Select Role --</option>
-<<<<<<< HEAD
                                     @if(auth()->user()->role == "Administrator")
                                     <option value="Administrator" {{ old('Role', isset($uEdit) ? $uEdit->role : '') == 'Administrator' ? 'selected' : '' }}>
                                         Administrator
                                     </option>
                                     @endif
-=======
-                                    <option value="Administrator" {{ old('Role', isset($uEdit) ? $uEdit->role : '') == 'Administrator' ? 'selected' : '' }}>
-                                        Administrator
-                                    </option>
->>>>>>> 777a96406e44bbe39a6a431482101893bcfb77c3
                                     <option value="Principal" {{ old('Role', isset($uEdit) ? $uEdit->role : '') == 'Principal' ? 'selected' : '' }}>
                                         Principal
                                     </option>
@@ -182,32 +176,20 @@
                         <table id="example1" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-<<<<<<< HEAD
                                     <th class="text-center">No</th>
-=======
-                                    <th>No</th>
->>>>>>> 777a96406e44bbe39a6a431482101893bcfb77c3
                                     <th>Last Name</th>
                                     <th>First Name</th>
                                     <th>Middle Name</th>
                                     <th>Username</th>
                                     <th>Role</th>
-<<<<<<< HEAD
                                     <th>Status</th>
                                     <th width="150">Action</th>
-=======
-                                    <th width="100">Action</th>
->>>>>>> 777a96406e44bbe39a6a431482101893bcfb77c3
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($users as $index => $user)
                                 <tr id="user-row-{{ $user->id }}">
-<<<<<<< HEAD
                                     <td width="50" class="text-center">{{ $loop->iteration }}</td>
-=======
-                                    <td>{{ $loop->iteration }}</td>
->>>>>>> 777a96406e44bbe39a6a431482101893bcfb77c3
                                     <td>{{ $user->lname }}</td>
                                     <td>{{ $user->fname }}</td>
                                     <td>{{ $user->mname }}</td>
@@ -218,7 +200,6 @@
                                         </span>
                                     </td>
                                     <td class="text-center">
-<<<<<<< HEAD
                                         @if($user->status == 1)
                                             <span class="badge badge-success">Active</span>
                                         @else
@@ -235,8 +216,6 @@
                                         </button>
 
                                         <!-- Edit & Delete Buttons -->
-=======
->>>>>>> 777a96406e44bbe39a6a431482101893bcfb77c3
                                         <a href="{{ route('users.edit', $user->id) }}" class="btn btn-info btn-xs" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
@@ -258,7 +237,6 @@
         </div>
     </div>
 </div>
-<<<<<<< HEAD
 <div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -320,62 +298,6 @@
             },
             error: function() {
                 toastr.error('Failed to update status.');
-=======
-
-<!-- Delete Confirmation Script -->
-@section('scripts')
-<script>
-    // Handle both Create & Update via AJAX (same form, same route)
-    $('form[action="{{ route('users.save') }}"]').on('submit', function(e) {
-        e.preventDefault();
-
-        let form = $(this);
-        let submitButton = form.find('button[type="submit"]');
-        let originalText = submitButton.html();
-
-        // Disable button & show loading
-        submitButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
-
-        // Clear previous errors
-        $('.text-danger.small').text('');
-
-        $.ajax({
-            url: '{{ route('users.save') }}',
-            method: 'POST',
-            data: form.serialize(), // Simple serialize is enough (no file upload)
-            success: function(response) {
-                // Success from controller redirect with session('success')
-                toastr.success(
-                    form.find('input[name="id"]').val()
-                        ? 'User updated successfully!'
-                        : 'User created successfully!'
-                );
-
-                // Reload the page to refresh the list (simple & reliable)
-                setTimeout(() => location.reload(), 1200);
-            },
-            error: function(xhr) {
-                if (xhr.status === 422) { // Laravel validation error
-                    let errors = xhr.responseJSON.errors;
-
-                    $.each(errors, function(field, messages) {
-                        // Match field name to error span
-                        let errorElement = $('[name="' + field + '"]').closest('.form-group').find('.text-danger.small');
-                        if (errorElement.length === 0) {
-                            errorElement = form.find('.text-danger.small').first();
-                        }
-                        errorElement.text(messages[0]);
-                    });
-
-                    toastr.error('Please fix the errors below.');
-                } else {
-                    toastr.error('Something went wrong. Please try again.');
-                }
-            },
-            complete: function() {
-                // Re-enable button
-                submitButton.prop('disabled', false).html(originalText);
->>>>>>> 777a96406e44bbe39a6a431482101893bcfb77c3
             }
         });
     });

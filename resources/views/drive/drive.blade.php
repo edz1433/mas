@@ -19,19 +19,21 @@
                 </nav>
                 <div class="card-body folder-grid">
                     @php
-                        $userid =  auth()->user()->id;
-                        $isAdmin = auth()->user()->hasRole('Administrator'); // Assuming you are using roles
+                        $userid = auth()->user()->id;
+                        $role = auth()->user()->role;
+                        $hasFullAccess = in_array($role, ['Administrator', 'Principal']); // Both have same access
                     @endphp
-                
-                    @forelse ($docFolder as $folder) 
-                        @php 
-                            $userarray = explode(',', $folder->user_access); 
+
+                    @forelse ($docFolder as $folder)
+                        @php
+                            $userarray = explode(',', $folder->user_access);
                             $checkaccess = !in_array($userid, $userarray);
-                            
-                            $finalcond = $checkaccess && $folder->user_access != "All"&& !$isAdmin; 
+                            $finalcond = $checkaccess && $folder->user_access != "All" && !$hasFullAccess;
+
+                            $canEdit = in_array($role, ['Administrator', 'Principal']); // Only Admin/Principal can edit/delete
                         @endphp
-            
-                        <div class="@if($finalcond) folder-items @else folder-item @endif;" id="folder-{{ $folder->id }}">
+
+                        <div class="@if($finalcond) folder-items @else folder-item @endif" id="folder-{{ $folder->id }}">
                             <a href="{{ route('sub-folder', $folder->id) }}" style="pointer-events: @if($finalcond) none @endif;">
                                 <i class="folder-icon fas"></i>
                                 @if($finalcond)
@@ -39,35 +41,19 @@
                                 @endif
                                 <span class="folder-name">{{ $folder->folder_name }}</span>
                             </a>
-                           {{--  <!-- edit folder -->
-                            @if(auth()->user()->role !== "All")
-                                <div class="folder-options" @if($folder->folder_name == "Archive" && auth()->user()->role != "Administrator") hidden @endif>
+
+                            <!-- Edit/Delete Options -->
+                            @if($canEdit && !($folder->folder_name == "Archive" && $role != 'Administrator' && $role != 'Principal'))
+                                <div class="folder-options">
                                     <div class="dropdown">
                                         <i class="fas fa-ellipsis-v" id="folderOptionsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
                                         <div class="dropdown-menu" aria-labelledby="folderOptionsDropdown">
-                                            <a class="dropdown-item" data-toggle="modal" data-target="#editFolderModal" onclick="editFolder({{ $folder->id }}, '{{$folder->folder_name}}')">Edit</a>
+                                            <a class="dropdown-item" data-toggle="modal" data-target="#editFolderModal"
+                                               onclick="editFolder({{ $folder->id }}, '{{$folder->folder_name}}')">Edit</a>
                                             <button class="dropdown-item" onclick="confirmDelete({{ $folder->id }})">Delete</button>
                                         </div>
                                     </div>
                                 </div>
-                            @endif --}}
-                            <!-- Edit Folder -->
-                            @if(auth()->user()->role !== "All")
-                            <div class="folder-options"
-                                @if($folder->folder_name == "Archive" && !in_array(auth()->user()->role, ['Administrator', 'Principal'])) hidden @endif>
-                                
-                                <!-- Check for roles that can access the Edit/Delete menu -->
-                                @if(in_array(auth()->user()->role, ['Administrator', 'Principal', 'Staff', 'Records Officer']))
-                                <div class="dropdown">
-                                    <i class="fas fa-ellipsis-v" id="folderOptionsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                                    <div class="dropdown-menu" aria-labelledby="folderOptionsDropdown">
-                                        <a class="dropdown-item" data-toggle="modal" data-target="#editFolderModal"
-                                        onclick="editFolder({{ $folder->id }}, '{{$folder->folder_name}}')">Edit</a>
-                                        <button class="dropdown-item" onclick="confirmDelete({{ $folder->id }})">Delete</button>
-                                    </div>
-                                </div>
-                                @endif
-                            </div>
                             @endif
                         </div>
                     @empty

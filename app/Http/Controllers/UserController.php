@@ -22,10 +22,6 @@ class UserController extends Controller
                         ->get();
         }
 
-        $users = User::whereIn('role', ['Administrator', 'Principal', 'Teacher'])
-                     ->orderBy('lname')
-                     ->get();
-
         $uEdit = null; // create mode
 
         return view('users.ulist', compact('users', 'uEdit'));

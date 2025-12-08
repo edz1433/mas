@@ -2,11 +2,6 @@
 
 @section('body')
 <div class="container mt-1">
-
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
     <div class="row">
 
         <!-- LEFT: Profile Card -->
