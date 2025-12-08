@@ -2,8 +2,8 @@
 
 @section('body')
     <link rel="stylesheet" href="{{ asset('css/subfolder.css') }}">
-    <div class="container-fluid">
-        <div class="row" style="padding-top: 100px;">
+    <div class="container-fluid mt-1">
+        <div class="row">
             <div class="col-lg-2">
                 @include('drive.submenu')
             </div>
@@ -33,7 +33,7 @@
                     @php $connfold = $folder->connected_folder; @endphp
 
                     @if (!$isLeaf && $subfolder)
-                        <div class="card-body folder-grid" style="padding-bottom:40%;">
+                        <div class="card-body folder-grid" style="padding-bottom:10%;">
                             @php
                                 $userid = auth()->user()->id;
                             @endphp

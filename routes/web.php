@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DocumentFolderController;
 use App\Http\Controllers\DriveAccountController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\AccountContrroller;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\SampleController;
 use App\Http\Middleware\NoCacheMiddleware;
@@ -66,11 +67,16 @@ Route::group(['middleware'=>['login_auth', NoCacheMiddleware::class]],function()
     Route::get('/delete-file/{id}', [DocumentController::class, 'deleteFile'])->name('delete-file');
 
     //User
-    Route::get('/users/ulist',[MasterController::class,'user'])->name('ulist');
-    Route::post('/users/uCreate',[UserController::class,'uCreate'])->name('uCreate');
-    Route::get('/users/{id}',[UserController::class,'uEdit'])->name('uEdit');
-    Route::post('/users/uUpdate',[UserController::class,'uUpdate'])->name('uUpdate');
-    Route::get('/users/uDelete/{id}',[UserController::class,'uDelete'])->name('uDelete');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
+    Route::post('/users/save', [UserController::class, 'save'])->name('users.save');
+    Route::delete('/users/delete/{id}', [UserController::class, 'delete'])->name('users.delete');
+    Route::patch('/users/toggle-status/{id}', [UserController::class, 'toggleStatus'])->name('users.toggleStatus');
+
+
+    //Account
+    Route::get('/account-settings', [AccountContrroller::class, 'index'])->name('account.index');
+    Route::post('/account-update', [AccountContrroller::class, 'update'])->name('account.update');
     
     //Employee
     Route::get('/emp',[EmployeeController::class,'emp_list'])->name('emp_list');

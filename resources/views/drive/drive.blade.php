@@ -2,7 +2,7 @@
 
 @section('body')
 <link rel="stylesheet" href="{{ asset('css/folder.css') }}">
-<div class="container-fluid mt-4">
+<div class="container-fluid">
     <div class="row">
         <div class="col-lg-2">
             @include('drive.submenu')
@@ -54,10 +54,10 @@
                             <!-- Edit Folder -->
                             @if(auth()->user()->role !== "All")
                             <div class="folder-options"
-                                @if($folder->folder_name == "Archive" && auth()->user()->role != "Administrator") hidden @endif>
+                                @if($folder->folder_name == "Archive" && !in_array(auth()->user()->role, ['Administrator', 'Principal'])) hidden @endif>
                                 
                                 <!-- Check for roles that can access the Edit/Delete menu -->
-                                @if(in_array(auth()->user()->role, ['Administrator', 'Staff', 'Records Officer']))
+                                @if(in_array(auth()->user()->role, ['Administrator', 'Principal', 'Staff', 'Records Officer']))
                                 <div class="dropdown">
                                     <i class="fas fa-ellipsis-v" id="folderOptionsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
                                     <div class="dropdown-menu" aria-labelledby="folderOptionsDropdown">

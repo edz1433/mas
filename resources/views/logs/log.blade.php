@@ -76,7 +76,4 @@
         </div>
     </div>
 </div>
-<!-- Modal -->
-@include('account.modals')
-<!-- /End Modal -->
 @endsection

@@ -6,123 +6,118 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-use App\Models\Campus;
 
 class UserController extends Controller
 {
-
-    public function uCreate(Request $request){
-        $module = isset($request->module) ? $request->module : '';
-
-        $validator = Validator::make($request->all(), [
-            'CampusName'=>'required',
-            'FirstName'=>'required',
-            'MiddleName'=>'required',
-            'LastName'=>'required',
-            'Username'=>'required|unique:users',
-            'Password'=>'required',
-            'Role'=>'required',
-            'ContactNo' => 'required',
-        ]);
-
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator);
-        }
-
-        else{
-            $password = Hash::make($request->input('Password'));
-            //Insert data into database
-            $query = User::insert([
-                'campus_id'=>$request->input('CampusName'),
-                'fname'=>$request->input('FirstName'),
-                'mname'=>$request->input('MiddleName'),
-                'lname'=>$request->input('LastName'),
-                'username'=>$request->input('Username'),
-                'password'=>$password,
-                'role'=>$request->input('Role'),
-                'contact_no'=>$request->input('ContactNo'),
-            ]);
-
-            if (!empty($module)) {
-                return redirect()->route('drive-account')->with('success', 'User Updated Successfully');
-            } else {
-                return redirect()->back()->with('success', 'User Updated Successfully');
-            } 
-        }
-    }
-
-    public function uEdit($id){
-        $camp = Campus::all();
-        $user = User::join('campuses', 'users.campus_id', '=', 'campuses.id')
-        ->join('offices', 'users.office_id', '=', 'offices.id')
-        ->select('users.id as uid', 'users.*', 'campuses.*','offices.office_abbr','users.office_id','users.contact_no')
-        ->where('users.role', '!=', 'Staff')
-        ->get();
-        $uEdit = User::join('campuses', 'users.campus_id', '=', 'campuses.id')
-        ->join('offices', 'users.office_id', '=', 'offices.id')
-        ->select('users.id as uid', 'users.*', 'campuses.*','offices.office_abbr','users.office_id','users.contact_no')
-        ->where('users.id', $id) 
-        ->first();
-
-        return view("users.ulist", compact('uEdit', 'user', 'camp'));
-    }
-
-    public function uUpdate(Request $request)
+    // Show list + form (create mode when no $uEdit)
+    public function index()
     {
-        $module = isset($request->module) ? $request->module : '';
-        
-        $id = $request->input('uid');
-        $validator = Validator::make($request->all(), [
-            'CampusName' => 'required',
-            'FirstName' => 'required',
-            'MiddleName' => 'required',
-            'LastName' => 'required',
-            'Username' => 'required|unique:users,username,' . $id . ',id',
-            'Role' => 'required',
-            'ContactNo' => 'required',
+        if (auth()->user()->role === 'Administrator') {
+            // Show all users
+            $users = User::orderBy('lname')->get();
+        } else {
+            // Show only Principal and Teacher
+            $users = User::whereIn('role', ['Principal', 'Teacher'])
+                        ->orderBy('lname')
+                        ->get();
+        }
 
+        $uEdit = null; // create mode
+
+        return view('users.ulist', compact('users', 'uEdit'));
+    }
+
+    // Edit form
+    public function edit($id)
+    {
+        $users = User::whereIn('role', ['Principal', 'Teacher'])
+                     ->orderBy('lname')
+                     ->get();
+
+        $uEdit = User::findOrFail($id);
+
+        return view('users.ulist', compact('users', 'uEdit'));
+    }
+
+    // Handle both Create & Update from the same form
+    public function save(Request $request)
+    {
+        $isUpdate = $request->filled('id');
+        $userId   = $request->input('id');
+
+        $rules = [
+            'FirstName'  => 'required|string|max:255',
+            'MiddleName' => 'required|string|max:255',
+            'LastName'   => 'required|string|max:255',
+            'Username'   => 'required|string|max:255|unique:users,username' . ($isUpdate ? ','.$userId : ''),
+            'Role'       => 'required|in:Administrator,Principal,Teacher',
+        ];
+
+        // Password required only on create
+        if (!$isUpdate) {
+            $rules['Password'] = 'required|min:6';
+        } else {
+            $rules['Password'] = 'nullable|min:6';
+        }
+
+        $validator = Validator::make($request->all(), $rules, [
+            'Role.in' => 'Please select a valid role.',
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator);
-        } else {
-            $user = User::find($id);
-            if (!$user) {
-                return redirect()->back()->with('error', 'User not found');
-            }
-
-            $user->campus_id = $request->input('CampusName');
-            $user->fname = $request->input('FirstName');
-            $user->mname = $request->input('MiddleName');
-            $user->lname = $request->input('LastName');
-            $user->username = $request->input('Username');
-            $user->role = $request->input('Role');
-            $user->contact_no = $request->input('ContactNo');
-
-            
-            if ($request->has('Password')) {
-                $user->password = Hash::make($request->input('Password'));
-            }
-
-            $user->save();
-            if (!empty($module)) {
-                return redirect()->route('edit-account', $id)->with('success', 'User Updated Successfully');
-            } else {
-                return redirect()->back()->with('success', 'User Updated Successfully');
-            }
-            
+            return redirect()->back()
+                             ->withErrors($validator)
+                             ->withInput();
         }
+
+        if ($isUpdate) {
+            $user = User::findOrFail($userId);
+            $successMessage = 'User updated successfully!';
+        } else {
+            $user = new User();
+            $successMessage = 'User created successfully!';
+        }
+
+        // Save data (force uppercase for names – matches your JS oninput)
+        $user->fname    = strtoupper($request->FirstName);
+        $user->mname    = strtoupper($request->MiddleName);
+        $user->lname    = strtoupper($request->LastName);
+        $user->username = $request->Username;
+        $user->role     = $request->Role;
+
+        // Only update password if provided
+        if ($request->filled('Password')) {
+            $user->password = Hash::make($request->Password);
+        }
+
+        $user->save();
+
+        return redirect()->route('users.index')
+                         ->with('success', $successMessage);
     }
 
-    public function uDelete($id){
-        $users = User::find($id);
-        $users->delete();
+    // Delete (AJAX)
+    public function delete($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
 
         return response()->json([
-            'status'=>200,
-            'uid'=>$id,
+            'status'  => 200,
+            'message' => 'User deleted successfully',
+            'uid'     => $id
         ]);
     }
 
+    public function toggleStatus($id)
+    {
+        $user = User::findOrFail($id);
+
+        // Toggle status: 1 = Active, 0 = Inactive
+        $user->status = $user->status == 1 ? 0 : 1;
+        $user->save();
+
+        // Return JSON response
+        return response()->json(['status' => $user->status]);
+    }
 }

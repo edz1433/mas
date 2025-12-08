@@ -57,19 +57,23 @@
         <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">
-                    <img src="{{ auth()->user()->profile_photo ?? asset('Uploads/user-default.png') }}" 
+                    <img src="{{ asset('Uploads/profile/'.auth()->user()->profile) }}" 
                         alt="User Avatar" class="img-circle elevation-2" style="width:35px; height:35px; margin-top: -10px; object-fit:cover;">
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     <span class="dropdown-item dropdown-header">
                         {{ auth()->user()->fname }} {{ auth()->user()->lname }}<br>
-                        <small>{{ auth()->user()->role ?? 'User' }}</small>
+                        <small>{{ auth()->user()->role }}</small>
                     </span>
+                <!-- Account Settings -->
+                <a href="{{ route('account.index') }}" class="dropdown-item">
+                    <i class="fas fa-user-cog mr-2 text-info"></i> Account Settings
+                </a>
                     <div class="dropdown-divider"></div>
                     <a href="{{ route('logout') }}" 
                     class="dropdown-item"
                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                        <i class="fas fa-sign-out-alt text-danger mr-2"></i> Logout
                     </a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                         @csrf
@@ -93,23 +97,41 @@
     </aside>
 
     <!-- CONTENT WRAPPER -->
-    <div class="content-wrapper">
+    <div class="content-wrapper mt-1">
         <div class="content">
             @yield('body')
         </div>
     </div>
 
     <!-- FOOTER -->
+    <!-- Main Footer -->
     <footer class="main-footer">
-        <strong>Maintain and Manage by <a href="#">MIS</a>.</strong> All rights reserved.
+        <!-- To the right (optional version) -->
+        <div class="float-right d-none d-sm-inline">
+            <small>Version 1.0</small>
+        </div>
+
+        <!-- Default Content (Centered) -->
+        <div class="text-left">
+            Developed by <strong>Edwin Abril Jr.</strong>
+            &nbsp;•&nbsp;
+            <a href="https://www.facebook.com/eabril.27" target="_blank" class="text-decoration-none">
+                <i class="fab fa-facebook-f"></i> Facebook
+            </a>
+            &nbsp;•&nbsp;
+            Powered by
+            <a href="https://www.facebook.com/kerritsolution" target="_blank" class="text-decoration-none">
+                <strong>Kerr IT Solutions</strong>
+            </a>
+        </div>
     </footer>
 
 </div>
 
 @include('script.driveScript')
 @include('script.masterScript')
+@yield('scripts')
 @include('script.empScript')
-@include('script.userScript')
 @include('script.officeScript')
 
 </body>
